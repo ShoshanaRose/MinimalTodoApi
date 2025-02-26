@@ -38,30 +38,34 @@ if (app.Environment.IsDevelopment())
 app.UseCors("AllowAllOrigins");
 
 
-app.MapGet("/", () => "....התחל בשליפות" +"\n"+
-            "/items - לקבלת כל המשימות"+"\n"+
-            "/item - להוספת משימה חדשה"+"\n"+
-            "/item/{id} - לעדכון / מחיקת משימה");
+// app.MapGet("/", () => "....התחל בשליפות" +"\n"+
+//             "/items - לקבלת כל המשימות"+"\n"+
+//             "/item - להוספת משימה חדשה"+"\n"+
+//             "/item/{id} - לעדכון / מחיקת משימה");
 
 // Route לשליפת כל המשימות
 app.MapGet("/items", async (ToDoDbContext db) =>
     await db.Items.ToListAsync());
 
 // Route להוספת משימה חדשה
-app.MapPost("/item", async (Item item, ToDoDbContext db) =>
+app.MapPost("/item", async (string todo, ToDoDbContext db) =>
 {
-    db.Items.Add(item);
+    var newItem = new Item
+    {
+        Name = todo,
+        IsComplete = false
+    };
+    db.Items.Add(newItem);
     await db.SaveChangesAsync();
-    return Results.Created($"/items/{item.Id}", item);
+    return Results.Created($"/items/{newItem.Id}", newItem);
 });
 
 // Route לעדכון משימה
-app.MapPut("/item/{id}", async (int id, Item updatedItem, ToDoDbContext db) =>
+app.MapPut("/item/{id}", async (int id, bool isComplete, ToDoDbContext db) =>
 {
     var item = await db.Items.FindAsync(id);
     if (item is null) return Results.NotFound();
-    item.Name = updatedItem.Name;
-    item.IsComplete = updatedItem.IsComplete;
+    item.IsComplete = isComplete;
     await db.SaveChangesAsync();
     return Results.NoContent();
 });
