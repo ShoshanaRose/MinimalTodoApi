@@ -37,12 +37,6 @@ if (app.Environment.IsDevelopment())
 // הפעלת מדיניות CORS
 app.UseCors("AllowAllOrigins");
 
-
-// app.MapGet("/", () => "....התחל בשליפות" +"\n"+
-//             "/items - לקבלת כל המשימות"+"\n"+
-//             "/item - להוספת משימה חדשה"+"\n"+
-//             "/item/{id} - לעדכון / מחיקת משימה");
-
 // Route לשליפת כל המשימות
 app.MapGet("/items", async (ToDoDbContext db) =>
     await db.Items.ToListAsync());
