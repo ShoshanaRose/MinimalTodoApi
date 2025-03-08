@@ -24,18 +24,20 @@ builder.Services.AddSwaggerGen();
 var app = builder.Build();
 
 // הפעלת Swagger
-if (app.Environment.IsDevelopment())
-{
+// if (app.Environment.IsDevelopment())
+// {
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
         c.RoutePrefix = string.Empty; // זה יגרום ל-Swagger UI להיות זמין ב-root
     });
-}
+// }
 
 // הפעלת מדיניות CORS
 app.UseCors("AllowAllOrigins");
+
+app.MapGet("/", ()=>"ToDoApi is runing!");
 
 // Route לשליפת כל המשימות
 app.MapGet("/items", async (ToDoDbContext db) =>
