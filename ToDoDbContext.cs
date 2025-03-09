@@ -18,8 +18,18 @@ public partial class ToDoDbContext : DbContext
 
     public virtual DbSet<Item> Items { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseMySql("name=ToDoDB", Microsoft.EntityFrameworkCore.ServerVersion.Parse("8.0.40-mysql"));
+
+
+protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+{
+    var connectionString = Environment.GetEnvironmentVariable("ToDoDB");// קריאת ה-connection string ממילת הסביבה
+    // ודא שהמשתנה לא NULL או ריק
+    if (string.IsNullOrEmpty(connectionString))
+    {
+        throw new InvalidOperationException("Connection string 'ToDoDB' not found in environment variables.");
+    }
+    optionsBuilder.UseMySql(connectionString, Microsoft.EntityFrameworkCore.ServerVersion.Parse("8.0.40-mysql"));// חיבור למסד הנתונים
+}
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
